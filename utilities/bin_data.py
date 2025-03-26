@@ -21,7 +21,7 @@ def bin_data(data, bin_size):
         binned_data.append(avg(data[i:i+bin_size]))
         st_error.append(stdev(data[i:i+bin_size]))
         sem_error.append(stdev(data[i:i+bin_size])/np.sqrt(len(data[i:i+bin_size])))
-    return binned_data, st_error
+    return binned_data, st_error, sem_error
 
 #given mass array and bfld array, sort by mass but change bfld based on sorting mass
 def sort_mass(mass, bfld, sfri="", removeNan=True):
@@ -30,7 +30,7 @@ def sort_mass(mass, bfld, sfri="", removeNan=True):
     sorted_mass = np.sort(mass)
     #create a new array to store the sorted bfld
     sorted_bfld = np.zeros(len(bfld))
-    if sfri != "":
+    if type(sfri) != list:
         sorted_sfri = np.zeros(len(sfri))
     #iterate over the sorted mass array
     for i in range(0,len(sorted_mass)):
@@ -38,9 +38,9 @@ def sort_mass(mass, bfld, sfri="", removeNan=True):
         index = np.where(mass == sorted_mass[i])
         #store the bfld in the sorted bfld array
         sorted_bfld[i] = bfld[index[0][0]]
-        if sfri != "":
+        if type(sfri) != list:
             sorted_sfri[i] = sfri[index[0][0]]
-    if sfri != "":
+    if type(sfri) != list:
         return sorted_mass, sorted_bfld, sorted_sfri
     else:
         return sorted_mass, sorted_bfld
