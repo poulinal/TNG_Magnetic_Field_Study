@@ -2,6 +2,7 @@
 import numpy as np
 import scipy.stats as st
 import matplotlib.pyplot as plt
+import matplotlib
 from matplotlib.legend_handler import HandlerTuple
 from utilities.bin_data import removeNans
 
@@ -69,17 +70,19 @@ def plot_wcontour(isoCen_mass, isoCen_bfld,
                   preInf_mass_er, preInf_bfld_er, 
                   postInf_mass_er, postInf_bfld_er, 
                   preInf_mass_nonBin, preInf_bfld_nonBin,
-                  filename, log=True,  
-                  ylabel="$log_{10}$(<B> / $\mu G$)", xlabel="$log_{10}$($M_*$ / $M_\odot$)",
+                  postInf_mass_nonBin = None, postInf_bfld_nonBin = None,
+                  filename = "", log=True,  
+                  ylabel="$\log_{10}$ ( $\langle$B$\\rangle$ / $\mu G$)", xlabel="$\log_{10}$($M_*$ / $M_\odot$)",
                   title="", fs=12, contAlph=0.2, alph = 0.3):
     # xdat = preInf_mass_nonBin
     # ydat = preInf_bfld_nonBin
     xdat, ydat = removeNans(preInf_mass_nonBin, preInf_bfld_nonBin)
     concol = 'green'
+    concol2 = 'purple'
     linewidth = 0.75
     # alph = 0.5
     
-    binsize=100
+    binsize=130
     deltaX=(max(xdat)-min(xdat))/binsize
     deltaY=(max(ydat)-min(ydat))/binsize
 
@@ -103,9 +106,25 @@ def plot_wcontour(isoCen_mass, isoCen_bfld,
     #Z=np.reshape(kernel(positions).T,X.shape)
     #delSFR.reshape((len(s_mass),len(SFR)))    
     
-    
     #contour
     plt.contour(xx,yy,Z,colors=concol,linewidths=linewidth,levels=7,alpha=contAlph)
+    
+    if postInf_mass_nonBin is not None or postInf_bfld_nonBin is not None:
+        xdat2, ydat2 = removeNans(postInf_mass_nonBin, postInf_bfld_nonBin)
+        deltaX2=(max(xdat2)-min(xdat2))/binsize
+        deltaY2=(max(ydat2)-min(ydat2))/binsize
+        xmin2=min(xdat2)-deltaX2
+        xmax2=max(xdat2)+deltaX2
+        ymin2=min(ydat2)-deltaY2
+        ymax2=max(ydat2)+deltaY2
+        
+        xx2,yy2=np.mgrid[xmin2:xmax2:100j,ymin2:ymax2:100j]
+        positions2=np.vstack([xx2.ravel(),yy2.ravel()])
+        values2=np.vstack([xdat2,ydat2])
+        kernel2=st.gaussian_kde(values2)
+        Z2=np.reshape(kernel2(positions2).T,xx2.shape)
+        plt.contour(xx2,yy2,Z2,colors=concol2,linewidths=linewidth,levels=7,alpha=contAlph)
+    
     
 
     #plot non-isolated centrals
