@@ -4,3 +4,5 @@ TNG_workshop_data/galcat.npy
 TNG_workshop_data/catalogs/MassType.hdf5
 
 /backup_data
+
+.env
